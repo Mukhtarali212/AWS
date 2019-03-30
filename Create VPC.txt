@@ -1,0 +1,138 @@
+aws ec2 create-vpc --cidr-block 10.0.0.0/16
+{
+    "Vpc": {
+        "CidrBlock": "10.0.0.0/16",
+        "DhcpOptionsId": "dopt-4418343f",
+        "State": "pending",
+        "VpcId": "vpc-097163c98d8b91c87",
+        "OwnerId": "822336679681",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-0daf7ebda3dc2bf71",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+                    ],
+        "IsDefault": false,
+        "Tags": []
+    }
+}
+
+aws ec2 create-subnet --vpc-id vpc-097163c98d8b91c87 --cidr-block 10.0.1.0/24
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1c",
+        "AvailabilityZoneId": "use1-az6",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.1.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-09d0e9d465b552a1e",
+        "VpcId": "vpc-097163c98d8b91c87",
+        "OwnerId": "822336679681",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:us-east-1:822336679681:subnet/subnet-09d0e9d465b552a1e"
+    }
+}
+
+{
+    "Subnet": {
+        "AvailabilityZone": "us-east-1c",
+        "AvailabilityZoneId": "use1-az6",
+        "AvailableIpAddressCount": 251,
+        "CidrBlock": "10.0.0.0/24",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false,
+        "State": "pending",
+        "SubnetId": "subnet-06c2d9ae5ecb7d06d",
+        "VpcId": "vpc-097163c98d8b91c87",
+        "OwnerId": "822336679681",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:us-east-1:822336679681:subnet/subnet-06c2d9ae5ecb7d06d"
+    }
+}
+
+
+aws ec2 create-internet-gateway
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-09445efba6334325b",
+        "Tags": []
+    }
+}
+
+aws ec2 create-route-table --vpc-id vpc-097163c98d8b91c87
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-0a0b5070e4853f730",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-097163c98d8b91c87",
+        "OwnerId": "822336679681"
+    }
+}
+
+aws ec2 create-route --route-table-id rtb-0a0b5070e4853f730 --destination-cidr-block 0.0.0.0/0 --gateway-id igw-09445efba6334325b
+{
+    "Return": true
+}
+
+aws ec2 describe-route-tables --route-table-id rtb-0a0b5070e4853f730
+{
+    "RouteTables": [
+        {
+            "Associations": [],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0a0b5070e4853f730",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-09445efba6334325b",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-097163c98d8b91c87",
+            "OwnerId": "822336679681"
+        }
+    ]
+}   
+
+aws ec2 associate-route-table  --subnet-id subnet-09d0e9d465b552a1e --route-table-id rtb-0a0b5070e4853f730
+{
+    "AssociationId": "rtbassoc-0808c7d82bf6de960"
+}
+
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+
+aws ec2 create-security-group --group-name MySG --description "Security group for SSH access" --vpc-id vpc-097163c98d8b91c87
+{
+    "GroupId": "sg-09cd718b99145d093"
+}
+
+ws ec2 authorize-security-group-ingress --group-id sg-09cd718b99145d093 --protocol tcp --port 22 --cidr 0.0.0.0/0
+

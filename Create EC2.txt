@@ -1,0 +1,117 @@
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+
+aws ec2 create-security-group --group-name MySG --description "Security group for SSH access" --vpc-id vpc-097163c98d8b91c87
+{
+    "GroupId": "sg-09cd718b99145d093"
+}
+
+ws ec2 authorize-security-group-ingress --group-id sg-09cd718b99145d093 --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+aws ec2 run-instances --image-id ami-0565af6e282977273 --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-09cd718b99145d093 --subnet-id subnet-09d0e9d465b552a1e
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-0565af6e282977273",
+            "InstanceId": "i-0fee4b1e4a9c75441",
+            "InstanceType": "t2.micro",
+            "KeyName": "MyKeyPair",
+            "LaunchTime": "2019-03-30T06:30:08.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "us-east-1c",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-10-0-1-140.ec2.internal",
+            "PrivateIpAddress": "10.0.1.140",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-09d0e9d465b552a1e",
+            "VpcId": "vpc-097163c98d8b91c87",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2019-03-30T06:30:08.000Z",
+                        "AttachmentId": "eni-attach-091db8e7d8e40db76",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "MySG",
+                            "GroupId": "sg-09cd718b99145d093"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "0e:0c:95:25:93:90",
+                    "NetworkInterfaceId": "eni-0a8c61910b3d68792",
+                    "OwnerId": "822336679681",
+                    "PrivateIpAddress": "10.0.1.140",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateIpAddress": "10.0.1.140"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-09d0e9d465b552a1e",
+                    "VpcId": "vpc-097163c98d8b91c87"
+                }
+            ],
+            "RootDeviceName": "/dev/sda1",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "MySG",
+                    "GroupId": "sg-09cd718b99145d093"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            },
+            "CapacityReservationSpecification": {
+                "CapacityReservationPreference": "open"
+            }
+        }
+    ],
+    "OwnerId": "822336679681",
+    "ReservationId": "r-00adac2e3dc31d938"
+}
+
+aws ec2 create-snapshot --volume-id vol-0730ef49934d62b59 --description "This is my root volume snapshot"
+{
+    "Description": "This is my root volume snapshot",
+    "Encrypted": false,
+    "OwnerId": "822336679681",
+    "Progress": "",
+    "SnapshotId": "snap-06743b4ebbbd72d40",
+    "StartTime": "2019-03-30T07:33:03.000Z",
+    "State": "pending",
+    "VolumeId": "vol-0730ef49934d62b59",
+    "VolumeSize": 8,
+    "Tags": []
+}
